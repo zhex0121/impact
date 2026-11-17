@@ -79,7 +79,28 @@ To record fresh evidence instead: `npm run setup:fresh` re-runs the tests, Graph
 on every commit (needs Graphify: `uv tool install graphifyy==0.9.108 --python 3.12`), and `npm run review:live`
 re-runs the AI review (needs the `claude` CLI, signed in).
 
+### Review a change that was never recorded (experimental)
+
+*Added in a personal fork.* `scripts/review-change.mjs` runs the review pipeline on a live change, base..head in a
+local git repo, with no saved evidence: it runs the tests (and the head's tests against the base code), extracts the
+code graph with Entire (including native `impact`), builds the review, and lets a named person sign off or override.
+
+```
+node scripts/review-change.mjs --repo <path> --base main            # head defaults to HEAD
+node scripts/review-change.mjs --repo <path> --base main --ai-review # also asks the AI reviewer (needs the claude CLI)
+node scripts/review-change.mjs --repo <path> --base main --sign-off "Name" --residual-risk "what you accept" [--override --reason "why"]
+```
+
+It needs the Entire graph plugin and a repo shaped like the shop sample (TypeScript in `src/`, tests in
+`tests/*.test.ts` run with `node --test`). A `REQ-n` in the branch or commit messages is used as the requirement.
+Everything it writes goes to `.demo/live/`, never to `data/`. What it does not have for a live change: an author brief
+(so no claims are verified), blast radius and swarm (they replay recorded agent runs), and the web UI, which lists
+only recorded PRs. The trust score and one-sentence verdict are computed in the browser, so the script prints the
+rule-based route, blockers and open points instead.
+
 ### Entire Graph provider (experimental, opt-in)
+
+Technical report with the verification results and limits: [docs/entire-challenge.md](docs/entire-challenge.md).
 
 *Added in a personal fork, not part of the Junction team's original work.* Graphify stays the default.
 Set `IMPACT_GRAPH_PROVIDER=entire` and Impact runs the installed [Entire](https://entire.io) Graph plugin

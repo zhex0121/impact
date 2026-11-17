@@ -4,9 +4,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { readFileAt } from "./git.mjs";
 import { checkFileCitation } from "./claims.mjs";
-import { DATA, DEMO } from "./paths.mjs";
+import { DATA, DEMO, LIVE_DIR } from "./paths.mjs";
 
-const REVIEWS = path.join(DATA, "reviews");
+const REVIEWS = LIVE_DIR ? path.join(LIVE_DIR, "reviews") : path.join(DATA, "reviews");
 export const REVIEW_MODEL = "sonnet";
 
 const SYSTEM_PROMPT = `You are an independent code reviewer. You did not write this change and you have no other context than this message.
