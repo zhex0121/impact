@@ -64,6 +64,16 @@ Reading: against grep lines alone, Entire's output is *not* smaller on the tiny 
 `loadIndex`); it is smaller once grep's hits must be opened to see which function calls what, and the gap grows with the
 code size. Entire's answer also already names the callers, the tests and the call-site lines; grep's lines do not.
 
+## Sessions
+Entire is enabled for Claude Code in this repo (`.entire/settings.json`, hooks in `.claude/settings.json`). Committing agent
+work in a tracked session produced a real checkpoint: **`01M7MZNAXR0Y32WZNTVN8465E0`**, attached to commit `1469af2`
+(`entire checkpoint list` shows it). It was pushed to `origin` as `refs/entire/checkpoints/E0/01M7MZNAXR0Y32WZNTVN8465E0`
+(`git ls-remote origin` shows it); the sync target is set locally to `origin` only (`.entire/settings.local.json`, not committed).
+Limits: Entire was enabled only for the final session, so the earlier development (provider, native impact, live review) has
+no checkpoints and this one covers the final verification and documentation work. A checkpoint carries the session
+transcript, which includes prompts and local file paths: check who can read the fork before pushing more. No agent
+queried Entire Graph while developing (the agent guide from `entire graph setup` was not installed); Graph was used inside Impact.
+
 ## Limitations
 - Only the TypeScript shop sample was exercised. C# through Entire is untested; the Tieto C# PRs still use their recorded Roslyn data.
 - `scripts/review-change.mjs` needs a repo shaped like the shop sample (TypeScript in `src/`, `tests/*.test.ts` run with `node --test`). `--ai-review` (Claude CLI) was never run. A live change has no author brief, so no claims are verified, and no blast-radius or swarm evidence.
