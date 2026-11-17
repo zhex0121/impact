@@ -1,0 +1,46 @@
+{
+ "revision": "522c41b9a79d4b90f25c295b969e0d17277f918e",
+ "graphify": {
+  "tool": "graphify",
+  "version": "0.9.108",
+  "schema": 1
+ },
+ "entire": {
+  "tool": "entire-graph",
+  "version": "v0.6.0"
+ },
+ "scope": "(file) => /^(src|tests)\\/.+\\.ts$/.test(file ?? \"\")",
+ "symbols": {
+  "entire": 10,
+  "graphify": 10,
+  "overlap": 10,
+  "onlyEntire": [],
+  "onlyGraphify": [],
+  "rangeMismatches": []
+ },
+ "calls": {
+  "entire": 4,
+  "graphify": 4,
+  "overlap": 4,
+  "onlyEntire": [],
+  "onlyGraphify": []
+ },
+ "fileImports": {
+  "entire": 5,
+  "graphify": 5,
+  "overlap": 5,
+  "onlyEntire": [],
+  "onlyGraphify": []
+ },
+ "testLinks": {
+  "entire": 3,
+  "graphify": 3,
+  "overlap": 3,
+  "onlyEntire": [],
+  "onlyGraphify": []
+ },
+ "files": {
+  "onlyEntire": [],
+  "onlyGraphify": []
+ }
+}

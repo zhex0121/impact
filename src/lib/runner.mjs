@@ -2,9 +2,9 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
-import { DATA, DEMO } from "./paths.mjs";
+import { DATA, DEMO, LIVE_DIR } from "./paths.mjs";
 
-const RUNS = path.join(DATA, "runs");
+const RUNS = LIVE_DIR ? path.join(LIVE_DIR, "runs") : path.join(DATA, "runs");
 export const TEST_COMMAND = 'node --test "tests/**/*.test.ts"';
 
 function unescapeXml(s) {

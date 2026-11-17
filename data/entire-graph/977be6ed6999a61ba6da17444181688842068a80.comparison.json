@@ -1,0 +1,50 @@
+{
+ "revision": "977be6ed6999a61ba6da17444181688842068a80",
+ "graphify": {
+  "tool": "graphify",
+  "version": "0.9.108",
+  "schema": 1
+ },
+ "entire": {
+  "tool": "entire-graph",
+  "version": "v0.6.0"
+ },
+ "scope": "(file) => /^(src|tests)\\/.+\\.ts$/.test(file ?? \"\")",
+ "symbols": {
+  "entire": 11,
+  "graphify": 10,
+  "overlap": 10,
+  "onlyEntire": [
+   "fn:tests/checkout.test.ts#total"
+  ],
+  "onlyGraphify": [],
+  "rangeMismatches": []
+ },
+ "calls": {
+  "entire": 5,
+  "graphify": 4,
+  "overlap": 4,
+  "onlyEntire": [
+   "fn:tests/checkout.test.ts#total -> fn:src/checkout/checkout.ts#checkoutTotal"
+  ],
+  "onlyGraphify": []
+ },
+ "fileImports": {
+  "entire": 5,
+  "graphify": 5,
+  "overlap": 5,
+  "onlyEntire": [],
+  "onlyGraphify": []
+ },
+ "testLinks": {
+  "entire": 3,
+  "graphify": 3,
+  "overlap": 3,
+  "onlyEntire": [],
+  "onlyGraphify": []
+ },
+ "files": {
+  "onlyEntire": [],
+  "onlyGraphify": []
+ }
+}
