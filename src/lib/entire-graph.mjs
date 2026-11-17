@@ -188,6 +188,7 @@ export function adaptSnapshot(raw, opts = {}) {
   const key = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
   return {
     revision: null, // set by the caller, who knows the commit
+    repoKey: header.repo_key,
     tool: "entire-graph",
     entireGraphVersion: header.provider_version,
     schemaVersion: header.schema_version,
@@ -210,6 +211,56 @@ export function adaptSnapshot(raw, opts = {}) {
     externals: externals.sort((a, b) => key(`${a.file}>${a.target}`, `${b.file}>${b.target}`)),
     otherSymbols: Object.fromEntries(Object.entries(otherSymbolKinds).sort()),
     otherRelations: Object.fromEntries(Object.entries(otherRelations).sort()),
+  };
+}
+
+export const ENTIRE_IMPACT_COMMAND = "entire-graph impact --symbol <file>:<line> --repo <clean checkout> --format json --depth 2 --limit 50";
+
+/**
+ * Run the native `entire-graph impact` for one symbol on a clean checkout. Returns the parsed JSON.
+ * Only flags listed by `entire-graph impact --help` are used. Without --head the checkout is read as is.
+ */
+export function runEntireImpact(dir, symbol) {
+  const r = spawnSync(entireGraphBin(), ["impact", "--symbol", `${symbol.file}:${symbol.line}`, "--repo", dir, "--format", "json", "--depth", "2", "--limit", "50"], {
+    encoding: "utf8",
+    maxBuffer: 64 * 1024 * 1024,
+  });
+  if (r.status !== 0) throw new Error(`entire-graph impact failed for ${symbol.id}: ${(r.stderr || r.stdout).trim()}`);
+  const json = JSON.parse(r.stdout);
+  if (json.disambiguation_required) throw new Error(`entire-graph impact: ${symbol.id} at ${symbol.file}:${symbol.line} is ambiguous`);
+  return json;
+}
+
+/**
+ * Adapt one `entire-graph impact` answer into Impact ids. Nothing is invented: every entry keeps Entire's
+ * relation, depth and call site. `known` maps Entire symbol ids (repo key stripped) to Impact symbols.
+ * Latency and cache fields in the answer are ignored so the result is deterministic.
+ */
+export function adaptImpact(json, { repoKey, byEntireId }) {
+  const strip = (id) => (id.startsWith(`${repoKey}:`) ? id.slice(repoKey.length + 1) : id);
+  const endpoint = (e) => {
+    const ep = e.endpoint;
+    const sym = byEntireId.get(strip(ep.id));
+    const base = { kind: ep.kind, file: ep.file_path, relation: e.relation, direction: e.direction ?? null, depth: e.depth ?? 1 };
+    if (e.via) base.via = e.via;
+    if (e.call_site) base.callSite = { file: e.call_site.file_path, line: e.call_site.line };
+    if (ep.kind === "file") return { ...base, id: `file:${ep.file_path}` };
+    return { ...base, id: sym?.id ?? null, entireId: strip(ep.id), name: ep.qualified_name, unmapped: !sym };
+  };
+  const section = (sec) => (sec?.entries ?? []).map(endpoint);
+  const callers = section(json.callers);
+  return {
+    focus: { entireId: strip(json.focus.id), file: json.focus.file_path, line: json.focus.start_line, endLine: json.focus.end_line, kind: json.focus.kind },
+    callers,
+    callees: section(json.callees),
+    typeConsumers: section(json.type_consumers),
+    dataFlows: section(json.data_flows),
+    coChanges: section(json.co_changes),
+    siblings: section(json.siblings),
+    totals: { callers: json.callers?.total ?? 0, callees: json.callees?.total ?? 0, typeConsumers: json.type_consumers?.total ?? 0, dataFlows: json.data_flows?.total ?? 0, coChanges: json.co_changes?.total ?? 0 },
+    completeness: json.completeness_scope?.level ?? json.stats?.completeness_level ?? null,
+    warnings: (json.warnings ?? []).map((w) => w.code),
+    partialFailures: json.partial_failures ?? [],
   };
 }
 

@@ -95,7 +95,9 @@ IMPACT_GRAPH_PROVIDER=entire npm run gate -- req-17     # any command that build
 
 The review's coverage section then names "Entire Graph", with its gaps. It supports the TypeScript shop
 sample, and on all eight sample commits it gives the same symbols, line ranges and call links as Graphify.
-C# is not supported through this provider (the Tieto PRs still use their recorded Roslyn data). Details and
+In Entire mode Impact also asks Entire's native `entire graph impact` about every edited function *and type*, so
+an edit to an interface flags the functions that use it (`node scripts/entire-impact-demo.mjs` shows it;
+`IMPACT_ENTIRE_IMPACT=off` turns it off). C# is not supported through this provider (the Tieto PRs still use their recorded Roslyn data). Details and
 limits: [docs/entire-integration.md](docs/entire-integration.md).
 
 ### Hosted demo

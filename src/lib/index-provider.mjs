@@ -9,7 +9,7 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { adaptSnapshot, entireGraphVersion, runEntireSnapshot } from "./entire-graph.mjs";
+import { adaptImpact, adaptSnapshot, entireGraphVersion, runEntireImpact, runEntireSnapshot } from "./entire-graph.mjs";
 import { loadIndex as loadGraphifyIndex } from "./graphify.mjs";
 import { SAMPLE_REPO } from "./paths.mjs";
 
@@ -26,12 +26,14 @@ const inScope = (file) => /^(src|tests)\/.+\.ts$/.test(file ?? "");
 const isTestFile = (file) => /^tests\//.test(file ?? "");
 const cache = new Map(); // per process only; a new process extracts again
 
-/** Run Entire Graph on a clean export of `sha` from the sample repo and adapt the result. */
-function loadEntireIndex(sha) {
-  if (cache.has(sha)) return cache.get(sha);
+function requireEntire() {
   if (!entireGraphVersion()) {
     throw new Error("IMPACT_GRAPH_PROVIDER=entire, but the entire-graph plugin was not found. Install it with: entire plugin install graph");
   }
+}
+
+/** Run `fn(dir)` on a clean, committed-tree export of `sha`, then delete the export. */
+function withExport(sha, fn) {
   const work = fs.mkdtempSync(path.join(os.tmpdir(), "impact-entire-"));
   try {
     const dir = path.join(work, "src");
@@ -40,27 +42,62 @@ function loadEntireIndex(sha) {
     const tar = execFileSync("git", ["-C", SAMPLE_REPO, "archive", sha], { maxBuffer: 256 * 1024 * 1024, stdio: ["ignore", "pipe", "pipe"] });
     execFileSync("tar", ["-x", "-C", dir], { input: tar });
     execFileSync("git", ["init", "-q"], { cwd: dir });
-    const raw = runEntireSnapshot(dir);
-    const index = adaptSnapshot(raw, {
-      scope: inScope,
-      testFile: isTestFile,
-      importsFromFileCalls: true,
-      readSource: (file) => {
-        try {
-          return fs.readFileSync(path.join(dir, file), "utf8");
-        } catch {
-          return null;
-        }
-      },
-    });
+    return fn(dir);
+  } finally {
+    fs.rmSync(work, { recursive: true, force: true, maxRetries: 5 });
+  }
+}
+
+/** Run Entire Graph on a clean export of `sha` from the sample repo and adapt the result. */
+function loadEntireIndex(sha) {
+  if (cache.has(sha)) return cache.get(sha);
+  requireEntire();
+  try {
+    const index = withExport(sha, (dir) =>
+      adaptSnapshot(runEntireSnapshot(dir), {
+        scope: inScope,
+        testFile: isTestFile,
+        importsFromFileCalls: true,
+        readSource: (file) => {
+          try {
+            return fs.readFileSync(path.join(dir, file), "utf8");
+          } catch {
+            return null;
+          }
+        },
+      }),
+    );
     index.revision = sha;
     cache.set(sha, index);
     return index;
   } catch (err) {
     throw new Error(`Entire Graph provider failed for ${sha.slice(0, 7)}: ${err.message}`);
-  } finally {
-    fs.rmSync(work, { recursive: true, force: true, maxRetries: 5 });
   }
+}
+
+const impactCache = new Map(); // `${sha}|${symbol id}` -> adapted native impact; per process only
+
+/**
+ * Native `entire-graph impact` for each of `symbols` (entries of the index loaded for `sha`).
+ * One clean export per call, deleted afterwards. Returns Map(symbol id -> adapted impact).
+ * Throws if Entire fails; never answers from Graphify.
+ */
+export function nativeImpacts(sha, index, symbols) {
+  const out = new Map();
+  const missing = symbols.filter((s) => !impactCache.has(`${sha}|${s.id}`));
+  if (missing.length) {
+    requireEntire();
+    try {
+      withExport(sha, (dir) => {
+        for (const s of missing) impactCache.set(`${sha}|${s.id}`, runEntireImpact(dir, s));
+      });
+    } catch (err) {
+      throw new Error(`Entire Graph impact failed for ${sha.slice(0, 7)}: ${err.message}`);
+    }
+  }
+  const byEntireId = new Map([...index.symbols, ...index.testSymbols].map((x) => [x.entireId, x]));
+  for (const s of symbols) out.set(s.id, adaptImpact(impactCache.get(`${sha}|${s.id}`), { repoKey: index.repoKey, byEntireId }));
+  return out;
 }
 
 export function loadIndex(sha) {

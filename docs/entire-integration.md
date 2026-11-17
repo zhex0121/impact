@@ -28,6 +28,36 @@ Verified: all 171 evals, `brake` (7217 checks) and `fastlane` (92 held) pass in 
 wrapper logged the real `entire-graph snapshot` calls. Not verified: C#, repositories other than the shop
 sample, and the saved-evidence stages (`setup:fresh`, blast recording) in Entire mode.
 
+## Native `entire-graph impact` (Entire mode)
+
+Evaluated against the installed help and real runs on the shop sample:
+
+| Command | Verdict |
+|---|---|
+| `impact` | **Used.** One answer per symbol: callers (depth 1-2, exact `call_site.line`, test files included), callees, `type_consumers` (USES_TYPE / PARAM_TYPE / RETURNS_TYPE), `data_flows`, `co_changes`, `siblings`, plus completeness. |
+| `neighbors` | Not used. A subset of `impact` (one relation, one direction); using both would duplicate it. |
+| `verify` | Not used. It adjudicates a test run against a recorded baseline, but its parsers (pytest, jest, cargo, go, ...) do not include `node --test`, so here it degrades to an exit-code-only verdict, and Impact already has its own recorded before/after runs. |
+
+What Impact gains (`src/lib/native-impact.mjs`, called from `buildModel`, Entire mode only):
+- **Edits to types and fields.** `editedSymbolIds` only sees functions, so a diff that only touches an interface
+  produced no edited symbols and no downstream. Now every edited type is sent to `impact`; the functions that use it
+  join `downstream` (marked "uses the edited type (Entire Graph impact)") and flow into the existing evidence step.
+- **Independent test cross-check.** The test files Entire says call the edited code are compared with the tests
+  the rule-based test mapper reaches; any difference is listed in the coverage gaps.
+- **Data flows and exact call sites** are kept in `impact.native` (a result that flows into a caller's output;
+  the call-site line from Entire itself).
+- `IMPACT_ENTIRE_IMPACT=off` keeps Entire as the index only, for before/after comparisons. Graphify mode never runs this step.
+
+Run `node scripts/entire-impact-demo.mjs`: scenario A is the real req-17 commit 1 (Entire agrees with Impact's
+call walk and test mapper); scenario B is a throwaway commit that only edits `Cart` (before: nothing found;
+after: `cartSubtotal()` and `checkoutTotal()` flagged, both unverified). The commit lives on a temporary branch
+in the gitignored `.demo/shop-sample` and is deleted afterwards.
+
+Limits: `impact` runs once per edited symbol (one clean export per review, about 0.15 s each, cached per process);
+depth is capped at 2 by Entire, and Impact's own walk covers deeper callers; `co_changes` is empty because the
+export has no history; a type's *users' callers* come from Impact's call walk, not from Entire; only
+TypeScript was tried. The helper functions in test files are not sent to `impact`.
+
 ## Comparison PoC (earlier stage)
 
 **Provenance.** Everything in Impact outside the files listed here is the work of the Junction 2026 team

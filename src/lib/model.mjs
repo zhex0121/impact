@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { authorOf, changedFiles as gitChangedFiles, changedLineRanges, readFileAt, unifiedDiff } from "./git.mjs";
 import { indexerLabel, isEntire, loadIndex } from "./index-provider.mjs";
+import { nativeImpactAnalysis, nativeImpactEnabled } from "./native-impact.mjs";
 import { graphifyGraph, loadBaseLinks } from "./graphify-tieto.mjs";
 import { mapTests, TEST_MAPPER_LABEL } from "./testmap.mjs";
 import { loadBaseRun, loadRun } from "./runner.mjs";
@@ -363,6 +364,16 @@ function entireGaps(index) {
  *
  * `opts` lets evals replay altered evidence: { run, brief, reviewRecord, decisions, policy }.
  */
+/** Gaps and additions from the native Entire impact step, in words for the coverage section. */
+function nativeGaps(native) {
+  const { addedDownstream, targets, incomplete } = native.info;
+  return [
+    addedDownstream.length ? `Entire Graph impact added ${addedDownstream.length} affected function(s) the call walk did not reach: ${addedDownstream.map((x) => `${x.id.split("#")[1]} (${x.via})`).join(", ")}.` : null,
+    ...targets.flatMap((t) => t.testFiles.entireOnly.map((f) => `Entire Graph says ${f} calls ${t.id.split("#")[1]}, but the test mapper found no test block there that reaches it.`)),
+    ...incomplete,
+  ].filter(Boolean);
+}
+
 export function buildModel(revisions, prId, sha, opts = {}) {
   const pr = revisions.prs.find((p) => p.id === prId);
   if (!pr) throw new Error(`unknown PR: ${prId}`);
@@ -387,7 +398,16 @@ export function buildModel(revisions, prId, sha, opts = {}) {
   const ranges = isBase ? {} : changedLineRanges(baseSha, sha);
   const diffFiles = changed.map((f) => ({ ...f, patch: unifiedDiff(baseSha, sha, f.file) }));
   const edited = isBase ? [] : editedSymbolIds(index, baseIndex, ranges);
-  const downstream = downstreamOf(index, edited);
+  let downstream = downstreamOf(index, edited);
+  // Entire mode only: ask Entire's own `impact` about every edited function and type, and add what it finds
+  // that the call walk above cannot (users of an edited type). Graphify mode skips this and is unchanged.
+  const native = !isBase && isEntire(index) && nativeImpactEnabled() ? nativeImpactAnalysis({ sha, index, baseIndex, edited, ranges, downstream, tests }) : null;
+  const nativeVia = new Map();
+  if (native) {
+    const added = native.extraDownstream.map((x) => x.id);
+    for (const x of native.extraDownstream) nativeVia.set(x.id, x.via);
+    downstream = [...new Set([...downstream, ...added, ...downstreamOf(index, [...edited, ...added])])];
+  }
   const symbolById = new Map(index.symbols.map((s) => [s.id, s]));
 
   // ---- Checks (joined by commit SHA, never by "latest") -----------------
@@ -561,7 +581,7 @@ export function buildModel(revisions, prId, sha, opts = {}) {
       for (const n of levelNodes) {
         if (n.type === "test" || n.type === "testfile") continue;
         if (n.state === "edited") edges.push({ id: `edits|${n.id}`, level, from: `pr:${pr.id}`, to: n.id, kind: "edits", confidence: "git diff", resolution: "resolved" });
-        if (n.state === "downstream") edges.push({ id: `may-affect|${n.id}`, level, from: `pr:${pr.id}`, to: n.id, kind: "may-affect", confidence: "via call links", resolution: "inferred" });
+        if (n.state === "downstream") edges.push({ id: `may-affect|${n.id}`, level, from: `pr:${pr.id}`, to: n.id, kind: "may-affect", confidence: nativeVia.get(n.id) ?? "via call links", resolution: "inferred" });
       }
     }
   }
@@ -584,12 +604,14 @@ export function buildModel(revisions, prId, sha, opts = {}) {
       "Dynamic calls, callbacks and consumers outside this repo are not indexed.",
       isEntire(index) ? "Function end lines come from the indexer (Entire Graph)." : "Function end lines come from brace matching, not from the indexer.",
       ...(isEntire(index) ? entireGaps(index) : []),
+      ...(native ? nativeGaps(native) : []),
       ...changed.filter((f) => !index.files.includes(f.file)).map((f) => `${f.file}: changed, but no symbols indexed (file-level only).`),
     ].filter(Boolean),
   };
   const impact = {
     edited: edited.map((id) => ({ id, label: fnLabel(id) })),
     downstream: downstream.map((id) => ({ id, label: fnLabel(id) })),
+    ...(native ? { native: native.info } : {}),
     unverified: evidence.filter((e) => e.status === "unverified").map((e) => ({ id: e.nodeId, label: e.label })),
     workflows,
     removedLinks,
