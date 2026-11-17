@@ -79,6 +79,25 @@ To record fresh evidence instead: `npm run setup:fresh` re-runs the tests, Graph
 on every commit (needs Graphify: `uv tool install graphifyy==0.9.108 --python 3.12`), and `npm run review:live`
 re-runs the AI review (needs the `claude` CLI, signed in).
 
+### Entire Graph provider (experimental, opt-in)
+
+*Added in a personal fork, not part of the Junction team's original work.* Graphify stays the default.
+Set `IMPACT_GRAPH_PROVIDER=entire` and Impact runs the installed [Entire](https://entire.io) Graph plugin
+on a clean export of each commit it reviews, then feeds the result to the same analysis. Nothing is read
+from `data/entire-graph/`, and if Entire fails the run fails (no fallback to Graphify).
+
+Needs: the Entire CLI and its graph plugin (`entire plugin install graph`; tested with CLI 0.13.4 and
+`entire-graph` v0.6.0), plus the normal setup above. Example:
+
+```
+IMPACT_GRAPH_PROVIDER=entire npm run gate -- req-17     # any command that builds a review: start, evals, gate
+```
+
+The review's coverage section then names "Entire Graph", with its gaps. It supports the TypeScript shop
+sample, and on all eight sample commits it gives the same symbols, line ranges and call links as Graphify.
+C# is not supported through this provider (the Tieto PRs still use their recorded Roslyn data). Details and
+limits: [docs/entire-integration.md](docs/entire-integration.md).
+
 ### Hosted demo
 
 `deploy/modal_app.py` hosts the app on [Modal](https://modal.com) (`modal deploy deploy/modal_app.py`).

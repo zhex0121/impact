@@ -1,0 +1,652 @@
+{
+ "revision": "977be6ed6999a61ba6da17444181688842068a80",
+ "tool": "entire-graph",
+ "entireGraphVersion": "v0.6.0",
+ "schemaVersion": "1.4",
+ "command": "entire-graph snapshot --repo <clean checkout> --format ndjson --profile full --worktree",
+ "raw": {
+  "records": 143,
+  "sha256_excluding_header_line": "6942075cff38543eea95591c4abf3b684484b23bf673e70d93af8bc3a7790bec"
+ },
+ "index": {
+  "revision": "977be6ed6999a61ba6da17444181688842068a80",
+  "tool": "entire-graph",
+  "entireGraphVersion": "v0.6.0",
+  "schemaVersion": "1.4",
+  "profile": "full",
+  "snapshotCompleteness": "ok",
+  "files": [
+   "src/checkout/checkout.ts",
+   "src/import/orderImport.ts",
+   "src/payments/ledger.ts",
+   "src/pricing/discount.ts",
+   "tests/checkout.test.ts",
+   "tests/ledger.test.ts",
+   "tests/orderImport.test.ts"
+  ],
+  "symbols": [
+   {
+    "id": "fn:src/checkout/checkout.ts#cartSubtotal",
+    "kind": "function",
+    "name": "cartSubtotal",
+    "file": "src/checkout/checkout.ts",
+    "line": 13,
+    "endLine": 19,
+    "signature": "function cartSubtotal(cart: Cart): number",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/checkout/checkout.ts:function:cartSubtotal",
+    "raw": {
+     "line": 33
+    }
+   },
+   {
+    "id": "fn:src/checkout/checkout.ts#checkoutTotal",
+    "kind": "function",
+    "name": "checkoutTotal",
+    "file": "src/checkout/checkout.ts",
+    "line": 22,
+    "endLine": 24,
+    "signature": "function checkoutTotal(cart: Cart): number",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/checkout/checkout.ts:function:checkoutTotal",
+    "raw": {
+     "line": 34
+    }
+   },
+   {
+    "id": "fn:src/import/orderImport.ts#importOrder",
+    "kind": "function",
+    "name": "importOrder",
+    "file": "src/import/orderImport.ts",
+    "line": 24,
+    "endLine": 30,
+    "signature": "function importOrder(row: string): ImportedOrder",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/import/orderImport.ts:function:importOrder",
+    "raw": {
+     "line": 40
+    }
+   },
+   {
+    "id": "fn:src/import/orderImport.ts#parseOrderRow",
+    "kind": "function",
+    "name": "parseOrderRow",
+    "file": "src/import/orderImport.ts",
+    "line": 9,
+    "endLine": 21,
+    "signature": "function parseOrderRow(row: string): { id: string; subtotalCents: number; discountPercent: number }",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/import/orderImport.ts:function:parseOrderRow",
+    "raw": {
+     "line": 39
+    }
+   },
+   {
+    "id": "fn:src/payments/ledger.ts#postCharge",
+    "kind": "function",
+    "name": "postCharge",
+    "file": "src/payments/ledger.ts",
+    "line": 8,
+    "endLine": 13,
+    "signature": "function postCharge(orderId: string, amountCents: number): LedgerEntry",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/payments/ledger.ts:function:postCharge",
+    "raw": {
+     "line": 46
+    }
+   },
+   {
+    "id": "fn:src/pricing/discount.ts#applyDiscount",
+    "kind": "function",
+    "name": "applyDiscount",
+    "file": "src/pricing/discount.ts",
+    "line": 5,
+    "endLine": 10,
+    "signature": "function applyDiscount(subtotalCents: number, percent: number): number",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/pricing/discount.ts:function:applyDiscount",
+    "raw": {
+     "line": 48
+    }
+   },
+   {
+    "id": "fn:tests/checkout.test.ts#total",
+    "kind": "function",
+    "name": "total",
+    "file": "tests/checkout.test.ts",
+    "line": 21,
+    "endLine": 21,
+    "signature": "total = (discountPercent: number) =>",
+    "language": "TypeScript",
+    "entireId": "TypeScript:tests/checkout.test.ts:function:total",
+    "raw": {
+     "line": 50
+    }
+   },
+   {
+    "id": "type:src/checkout/checkout.ts#Cart",
+    "kind": "type",
+    "name": "Cart",
+    "file": "src/checkout/checkout.ts",
+    "line": 8,
+    "endLine": 11,
+    "signature": "interface Cart",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/checkout/checkout.ts:interface:Cart",
+    "raw": {
+     "line": 30
+    }
+   },
+   {
+    "id": "type:src/checkout/checkout.ts#CartItem",
+    "kind": "type",
+    "name": "CartItem",
+    "file": "src/checkout/checkout.ts",
+    "line": 3,
+    "endLine": 6,
+    "signature": "interface CartItem",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/checkout/checkout.ts:interface:CartItem",
+    "raw": {
+     "line": 27
+    }
+   },
+   {
+    "id": "type:src/import/orderImport.ts#ImportedOrder",
+    "kind": "type",
+    "name": "ImportedOrder",
+    "file": "src/import/orderImport.ts",
+    "line": 3,
+    "endLine": 6,
+    "signature": "interface ImportedOrder",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/import/orderImport.ts:interface:ImportedOrder",
+    "raw": {
+     "line": 36
+    }
+   },
+   {
+    "id": "type:src/payments/ledger.ts#LedgerEntry",
+    "kind": "type",
+    "name": "LedgerEntry",
+    "file": "src/payments/ledger.ts",
+    "line": 1,
+    "endLine": 5,
+    "signature": "interface LedgerEntry",
+    "language": "TypeScript",
+    "entireId": "TypeScript:src/payments/ledger.ts:interface:LedgerEntry",
+    "raw": {
+     "line": 42
+    }
+   }
+  ],
+  "calls": [
+   {
+    "from": "fn:src/checkout/checkout.ts#checkoutTotal",
+    "to": "fn:src/checkout/checkout.ts#cartSubtotal",
+    "file": "src/checkout/checkout.ts",
+    "line": null,
+    "confidence": "EXTRACTED",
+    "score": 0.92,
+    "resolution": "exact",
+    "reason": "direct call expression resolved to same-file symbol",
+    "evidence": [
+     {
+      "kind": "call_site",
+      "file_path": "src/checkout/checkout.ts",
+      "start_line": 22,
+      "end_line": 24,
+      "detail": "cartSubtotal"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 102
+    }
+   },
+   {
+    "from": "fn:src/checkout/checkout.ts#checkoutTotal",
+    "to": "fn:src/pricing/discount.ts#applyDiscount",
+    "file": "src/checkout/checkout.ts",
+    "line": null,
+    "confidence": "EXTRACTED",
+    "score": 0.86,
+    "resolution": "import_resolved",
+    "reason": "direct call expression resolved through import path",
+    "evidence": [
+     {
+      "kind": "call_site",
+      "file_path": "src/checkout/checkout.ts",
+      "start_line": 22,
+      "end_line": 24,
+      "detail": "applyDiscount"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 101
+    }
+   },
+   {
+    "from": "fn:src/import/orderImport.ts#importOrder",
+    "to": "fn:src/import/orderImport.ts#parseOrderRow",
+    "file": "src/import/orderImport.ts",
+    "line": null,
+    "confidence": "EXTRACTED",
+    "score": 0.92,
+    "resolution": "exact",
+    "reason": "direct call expression resolved to same-file symbol",
+    "evidence": [
+     {
+      "kind": "call_site",
+      "file_path": "src/import/orderImport.ts",
+      "start_line": 24,
+      "end_line": 30,
+      "detail": "parseOrderRow"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 108
+    }
+   },
+   {
+    "from": "fn:src/import/orderImport.ts#importOrder",
+    "to": "fn:src/pricing/discount.ts#applyDiscount",
+    "file": "src/import/orderImport.ts",
+    "line": null,
+    "confidence": "EXTRACTED",
+    "score": 0.86,
+    "resolution": "import_resolved",
+    "reason": "direct call expression resolved through import path",
+    "evidence": [
+     {
+      "kind": "call_site",
+      "file_path": "src/import/orderImport.ts",
+      "start_line": 24,
+      "end_line": 30,
+      "detail": "applyDiscount"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 107
+    }
+   },
+   {
+    "from": "fn:tests/checkout.test.ts#total",
+    "to": "fn:src/checkout/checkout.ts#checkoutTotal",
+    "file": "tests/checkout.test.ts",
+    "line": null,
+    "confidence": "EXTRACTED",
+    "score": 0.86,
+    "resolution": "import_resolved",
+    "reason": "direct call expression resolved through import path",
+    "evidence": [
+     {
+      "kind": "call_site",
+      "file_path": "tests/checkout.test.ts",
+      "start_line": 21,
+      "end_line": 21,
+      "detail": "checkoutTotal"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 113
+    }
+   }
+  ],
+  "imports": [],
+  "unresolved": [
+   {
+    "file": "tests/checkout.test.ts",
+    "line": null,
+    "target": "node:assert/strict"
+   },
+   {
+    "file": "tests/checkout.test.ts",
+    "line": null,
+    "target": "node:test"
+   },
+   {
+    "file": "tests/ledger.test.ts",
+    "line": null,
+    "target": "node:assert/strict"
+   },
+   {
+    "file": "tests/ledger.test.ts",
+    "line": null,
+    "target": "node:test"
+   },
+   {
+    "file": "tests/orderImport.test.ts",
+    "line": null,
+    "target": "node:assert/strict"
+   },
+   {
+    "file": "tests/orderImport.test.ts",
+    "line": null,
+    "target": "node:test"
+   }
+  ],
+  "fileImports": [
+   {
+    "fromFile": "src/checkout/checkout.ts",
+    "toFile": "src/pricing/discount.ts",
+    "confidence": "EXTRACTED",
+    "score": 0.95,
+    "resolution": "import_resolved",
+    "reason": "relative import resolved to local file",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "src/checkout/checkout.ts",
+      "detail": "../pricing/discount.ts"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 99
+    }
+   },
+   {
+    "fromFile": "src/import/orderImport.ts",
+    "toFile": "src/pricing/discount.ts",
+    "confidence": "EXTRACTED",
+    "score": 0.95,
+    "resolution": "import_resolved",
+    "reason": "relative import resolved to local file",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "src/import/orderImport.ts",
+      "detail": "../pricing/discount.ts"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 106
+    }
+   },
+   {
+    "fromFile": "tests/checkout.test.ts",
+    "toFile": "src/checkout/checkout.ts",
+    "confidence": "EXTRACTED",
+    "score": 0.95,
+    "resolution": "import_resolved",
+    "reason": "relative import resolved to local file",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/checkout.test.ts",
+      "detail": "../src/checkout/checkout.ts"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 110
+    }
+   },
+   {
+    "fromFile": "tests/ledger.test.ts",
+    "toFile": "src/payments/ledger.ts",
+    "confidence": "EXTRACTED",
+    "score": 0.95,
+    "resolution": "import_resolved",
+    "reason": "relative import resolved to local file",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/ledger.test.ts",
+      "detail": "../src/payments/ledger.ts"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 115
+    }
+   },
+   {
+    "fromFile": "tests/orderImport.test.ts",
+    "toFile": "src/import/orderImport.ts",
+    "confidence": "EXTRACTED",
+    "score": 0.95,
+    "resolution": "import_resolved",
+    "reason": "relative import resolved to local file",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/orderImport.test.ts",
+      "detail": "../src/import/orderImport.ts"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 119
+    }
+   }
+  ],
+  "fileCalls": [
+   {
+    "fromFile": "tests/checkout.test.ts",
+    "to": "fn:src/checkout/checkout.ts#checkoutTotal",
+    "line": null,
+    "confidence": "EXTRACTED",
+    "score": 0.8,
+    "resolution": "import_resolved",
+    "reason": "top-level call expression resolved to symbol",
+    "evidence": [
+     {
+      "kind": "top_level_call_site",
+      "file_path": "tests/checkout.test.ts",
+      "detail": "checkoutTotal"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 114
+    }
+   },
+   {
+    "fromFile": "tests/ledger.test.ts",
+    "to": "fn:src/payments/ledger.ts#postCharge",
+    "line": null,
+    "confidence": "EXTRACTED",
+    "score": 0.8,
+    "resolution": "import_resolved",
+    "reason": "top-level call expression resolved to symbol",
+    "evidence": [
+     {
+      "kind": "top_level_call_site",
+      "file_path": "tests/ledger.test.ts",
+      "detail": "postCharge"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 118
+    }
+   },
+   {
+    "fromFile": "tests/orderImport.test.ts",
+    "to": "fn:src/import/orderImport.ts#importOrder",
+    "line": null,
+    "confidence": "EXTRACTED",
+    "score": 0.8,
+    "resolution": "import_resolved",
+    "reason": "top-level call expression resolved to symbol",
+    "evidence": [
+     {
+      "kind": "top_level_call_site",
+      "file_path": "tests/orderImport.test.ts",
+      "detail": "importOrder"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 122
+    }
+   }
+  ],
+  "externals": [
+   {
+    "file": "tests/checkout.test.ts",
+    "target": "node:assert/strict",
+    "external": true,
+    "confidence": "AMBIGUOUS",
+    "score": 0.8,
+    "resolution": "name_only",
+    "reason": "import declaration matched by language-specific scanner",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/checkout.test.ts",
+      "detail": "node:assert/strict"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 111
+    }
+   },
+   {
+    "file": "tests/checkout.test.ts",
+    "target": "node:test",
+    "external": true,
+    "confidence": "AMBIGUOUS",
+    "score": 0.8,
+    "resolution": "name_only",
+    "reason": "import declaration matched by language-specific scanner",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/checkout.test.ts",
+      "detail": "node:test"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 112
+    }
+   },
+   {
+    "file": "tests/ledger.test.ts",
+    "target": "node:assert/strict",
+    "external": true,
+    "confidence": "AMBIGUOUS",
+    "score": 0.8,
+    "resolution": "name_only",
+    "reason": "import declaration matched by language-specific scanner",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/ledger.test.ts",
+      "detail": "node:assert/strict"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 116
+    }
+   },
+   {
+    "file": "tests/ledger.test.ts",
+    "target": "node:test",
+    "external": true,
+    "confidence": "AMBIGUOUS",
+    "score": 0.8,
+    "resolution": "name_only",
+    "reason": "import declaration matched by language-specific scanner",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/ledger.test.ts",
+      "detail": "node:test"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 117
+    }
+   },
+   {
+    "file": "tests/orderImport.test.ts",
+    "target": "node:assert/strict",
+    "external": true,
+    "confidence": "AMBIGUOUS",
+    "score": 0.8,
+    "resolution": "name_only",
+    "reason": "import declaration matched by language-specific scanner",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/orderImport.test.ts",
+      "detail": "node:assert/strict"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 120
+    }
+   },
+   {
+    "file": "tests/orderImport.test.ts",
+    "target": "node:test",
+    "external": true,
+    "confidence": "AMBIGUOUS",
+    "score": 0.8,
+    "resolution": "name_only",
+    "reason": "import declaration matched by language-specific scanner",
+    "evidence": [
+     {
+      "kind": "import_statement",
+      "file_path": "tests/orderImport.test.ts",
+      "detail": "node:test"
+     }
+    ],
+    "warnings": [],
+    "raw": {
+     "line": 121
+    }
+   }
+  ],
+  "otherSymbols": {
+   "field": 9
+  },
+  "otherRelations": {
+   "CONFIGURES": {
+    "count": 5,
+    "heuristic": false
+   },
+   "CONTAINS": {
+    "count": 9,
+    "heuristic": false
+   },
+   "DATA_FLOWS": {
+    "count": 3,
+    "heuristic": false
+   },
+   "DEFINES": {
+    "count": 37,
+    "heuristic": false
+   },
+   "PARAM_TYPE": {
+    "count": 2,
+    "heuristic": false
+   },
+   "READS_FIELD": {
+    "count": 2,
+    "heuristic": false
+   },
+   "RETURNS_TYPE": {
+    "count": 2,
+    "heuristic": false
+   },
+   "USES_TYPE": {
+    "count": 4,
+    "heuristic": false
+   }
+  }
+ }
+}

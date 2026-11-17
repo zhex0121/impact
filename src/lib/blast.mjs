@@ -18,7 +18,8 @@ import fs from "node:fs";
 import path from "node:path";
 import { conceptOf } from "./ledger.mjs";
 import { loadTietoSlice, memberEnd } from "./graphify-tieto.mjs";
-import { blockEnd, loadIndex } from "./graphify.mjs";
+import { blockEnd } from "./graphify.mjs";
+import { indexerLabel, isEntire, loadIndex } from "./index-provider.mjs";
 import { DATA, ROOT } from "./paths.mjs";
 
 export const AGENTS = ["minimal", "normal", "wide"];
@@ -172,10 +173,10 @@ function callGraph(prId, headSha, baseSha) {
     // The shop's own code index at the base commit (the code every agent started from). Its IDs are "fn:file#name".
     const index = loadIndex(baseSha);
     if (!index) return { callers, known, tool: null };
-    const tool = `Graphify ${index.graphifyVersion}`;
+    const tool = indexerLabel(index);
     const id = (symbolId) => symbolId.replace(/^fn:/, "");
     for (const s of index.symbols) if (s.kind === "function") known.add(id(s.id));
-    for (const c of index.calls) add(id(c.to), id(c.from), `${tool}, the shop's saved code index`);
+    for (const c of index.calls) add(id(c.to), id(c.from), isEntire(index) ? `${tool}, extracted live for the shop's base commit` : `${tool}, the shop's saved code index`);
     return { callers, known, tool };
   }
   // 1. The saved Graphify run. It holds every function in the files the real change edits, and every caller one step out.
